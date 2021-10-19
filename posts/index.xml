@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on YalandHong</title>
+    <link>/posts/</link>
+    <description>Recent content in Posts on YalandHong</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; Yaland Hong
+</copyright>
+    <lastBuildDate>Mon, 18 Oct 2021 17:31:44 +0800</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ZSim/NVMain模拟器编译（HSCC/SHMA）</title>
+      <link>/posts/mem_zsim_hscc/</link>
+      <pubDate>Mon, 18 Oct 2021 17:31:44 +0800</pubDate>
+      
+      <guid>/posts/mem_zsim_hscc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ZSim/NVMain模拟器编译（AXLE-ZSIM-NVMAIN）</title>
+      <link>/posts/mem_zsim_axle/</link>
+      <pubDate>Fri, 15 Oct 2021 16:54:23 +0800</pubDate>
+      
+      <guid>/posts/mem_zsim_axle/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

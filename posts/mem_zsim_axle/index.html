@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>ZSim/NVMain模拟器编译（AXLE-ZSIM-NVMAIN） | YalandHong</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.3" />
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/github.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/json.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/plaintext.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"ZSim/NVMain模拟器编译（AXLE-ZSIM-NVMAIN）",
+      "item":"/posts/mem_zsim_axle/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/mem_zsim_axle/"
+    },
+    "headline": "ZSim\/NVMain模拟器编译（AXLE-ZSIM-NVMAIN） | YalandHong","datePublished": "2021-10-15T16:54:23+08:00",
+    "dateModified": "2021-10-15T16:54:23+08:00",
+    "wordCount":  4197 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "C. Wang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "Eureka is a elegant and powerful theme for Hugo."
+}
+</script><meta property="og:title" content="ZSim/NVMain模拟器编译（AXLE-ZSIM-NVMAIN） | YalandHong" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/mem_zsim_axle/" />
+
+
+
+
+<meta property="og:description" content="" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="YalandHong" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-10-15T16:54:23&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2021-10-15T16:54:23&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">YalandHong</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">文章</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">ZSim/NVMain模拟器编译（AXLE-ZSIM-NVMAIN）</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-10-15</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p>我在网上找到的关于ZSim/NVMain混合内存模拟器的编译教程大致分为两大类。一种使用的是原版ZSim，称为<a href="https://github.com/AXLEproject/axle-zsim-nvmain">axle-zsim-nvmain</a>。另一种使用的是华中科技大学在原版基础上扩展后的ZSim，称为<a href="https://github.com/CGCL-codes/HSCC">HSCC</a>或<a href="https://github.com/cyjseagull/SHMA">SHMA</a>。</p>
+<p>上面两者我都自己尝试过，也碰到过不少问题，做过一些探究，在此予以记录。对于我未能解决的问题，希望各位读者能够给出答案。</p>
+<p><strong>本文编译的是原版ZSim/NVMain，即axle-zsim-nvmain</strong>。关于HSCC的编译过程，请参考我另一篇博客。</p>
+<h2 id="环境">环境</h2>
+<p>操作系统：<strong>Ubuntu 12.04 amd64（VMWare）</strong></p>
+<p>内核版本：3.13.0-32-generic</p>
+<p>编译器版本：<strong>GCC 4.6.3</strong></p>
+<p>模拟器GitHub代码仓库：https://github.com/AXLEproject/axle-zsim-nvmain</p>
+<h2 id="编译模拟器">编译模拟器</h2>
+<h3 id="下载代码和依赖库">下载代码和依赖库</h3>
+<p>首先把GitHub仓库的代码拉下来。仓库的<a href="https://github.com/AXLEproject/axle-zsim-nvmain/blob/master/README.md">README</a>和<a href="https://github.com/AXLEproject/axle-zsim-nvmain/blob/master/install.sh">install.sh</a>把步骤都写的很详细了。根据这些内容，我自己的编译过程如下：</p>
+<ol>
+<li>
+<p>下载Intel PinTool并解压。axle-zsim-nvmain用的Pin 2.13，但官网已经不提供下载了。所以我下载了Pin 2.14。</p>
+<pre><code class="language-bash">wget http://software.intel.com/sites/landingpage/pintool/downloads/pin-2.14-71313-gcc.4.4.7-linux.tar.gz
+</code></pre>
+</li>
+<li>
+<p>下载NVMain的代码。install.sh用的是bitbucket的链接，但这个仓库已经失效了。所以我用的是GitHub上的NVMain仓库：https://github.com/SEAL-UCSB/NVmain</p>
+</li>
+<li>
+<p>安装依赖包。</p>
+<pre><code class="language-bash">sudo apt-get install libelfg0-dev libhdf5-serial-dev scons libconfig++-dev libboost-regex-dev g++
+</code></pre>
+</li>
+<li>
+<p>添加环境变量。有三个环境变量要设置：</p>
+<ol>
+<li><code>PINPATH</code>：PinTool解压后的文件夹</li>
+<li><code>NVMAINPATH</code>：NVMain所在的文件夹</li>
+<li><code>ZSIMPATH</code>：SConstruct所在的文件夹，即axle-zsim-nvmain目录</li>
+</ol>
+<p>由于我把Pin和NVMain都解压在axle的文件夹下面，所以我就直接在axle文件夹里创建了一个env.sh脚本：</p>
+<pre><code class="language-bash">BASEDIR=$(pwd)
+
+PINPATH=$BASEDIR/pintool
+NVMAINPATH=$BASEDIR/nvmain
+ZSIMPATH=$BASEDIR
+
+export ZSIMPATH PINPATH NVMAINPATH
+</code></pre>
+<p>在命令行里<code>sourve env.sh</code>即可。</p>
+</li>
+<li>
+<p>在SConstruct文件的第39行，ZSim会试图从你的环境变量里获取C/C++编译器名称。</p>
+<pre><code class="language-python">env['CXX'] = os.environ[&quot;CXX&quot;]
+env['CC'] = os.environ[&quot;CC&quot;]
+</code></pre>
+<p>但Ubuntu上默认没有这两个环境变量，所以这时候编译会报错。解决方法有两种：第一，设置这两个环境变量；第二，改写SConstruct，强制使用GCC。这里我选择第一种方式，在env.sh里加入：</p>
+<pre><code class="language-bash">export CXX=g++ CC=gcc
+</code></pre>
+<p>然后<code>source env.sh</code>。</p>
+</li>
+<li>
+<p>在SConstruct第168行，ZSim会从环境变量中获取boost库的位置。但是我的libboost-regex是通过apt装在系统库里的，所以这一步就没必要了。解决方法有两种：第一，设置一个不存在的路径作为BOOST环境变量；第二，改写SConstruct。这里我选择第二种方式，注释掉第168-170行。</p>
+<pre><code class="language-python"># Boost regex
+# BOOST = os.environ[&quot;BOOST&quot;]
+# env[&quot;CPPPATH&quot;] += [BOOST]
+# env[&quot;LIBPATH&quot;] += [joinpath(os.environ['BOOST'], &quot;stage/lib&quot;)]
+env[&quot;LIBS&quot;] += [&quot;boost_regex&quot;]
+</code></pre>
+</li>
+<li>
+<p>在nvmain/SConscript第36行，有个gem5相关的import。这个是用于gem5模拟器的，但我们是ZSim模拟器。</p>
+<pre><code class="language-python">from os.path import basename
+# from gem5_scons import Transform
+</code></pre>
+<p>我按照网上的一般做法，把它注释掉。</p>
+</li>
+</ol>
+<h3 id="兼容pin-214">兼容Pin 2.14</h3>
+<p>axle-zsim-nvmain使用的不是最新版本的ZSim，用Pin 2.14编译会有一些问题。最新的ZSim对SConstruct做了一些修改，兼容了Pin 2.14。但很遗憾，axle-zsim-nvmain并没有更新这些东西。所以我用meld工具把一些内容粘贴过来了。具体修改的内容详见<a href="https://gitee.com/YalandHong/axle-zsim-nvmain/commit/790af103a7b80b8f1e8860e127306bd79d5e04d1">我在Gitee上的commit</a>。</p>
+<p>具体来说，有两个问题：</p>
+<ol>
+<li>
+<p>Pin 2.13里的<code>extras/xed2-intel64</code>在Pin 2.14里改成了<code>extras/xed-intel64</code>。所以SConstruct里涉及到这个路径的地方都要改。否则编译的时候会找不到相关的头文件：</p>
+<pre><code class="language-plaintext">In file included from pintool/source/include/pin/pin.H:43:0,
+                 from build/opt/decoder.h:31,
+                 from build/opt/core.h:30,
+                 from build/opt/ooo_core.h:32,
+                 from build/opt/contention_sim.cpp:35:
+pintool/source/include/pin/level_base.PLH:83:29: fatal error: xed-iclass-enum.h: No such file or directory
+compilation terminated.
+</code></pre>
+</li>
+<li>
+<p>在Pin 2.13的<code>intel64/lib-ext</code>里有<code>libdwarf.a</code>和<code>libdwarf.so</code>，到了Pin 2.14只有一个<code>libpindwarf.a</code>。于是，编译的时候会找不到这个库。</p>
+<pre><code class="language-plaintext">scons: *** [build/opt/libzsim.so] Implicit dependency `pintool/intel64/lib-ext/libdwarf.a' not found, needed by target `build/opt/libzsim.so'.
+</code></pre>
+</li>
+</ol>
+<h3 id="编译代码">编译代码</h3>
+<p>在axle-zsim-nvmain目录下运行scons编译。<code>-j</code>参数可以指定多线程加速编译过程。编译完后会生成<code>zsim</code>和<code>libzsim.so</code>两个文件，放在build/opt文件夹里。</p>
+<pre><code class="language-bash">scons -j2
+</code></pre>
+<p>这样编译出来的程序带有-O3优化。如果需要debug的话，要加<code>--d</code>参数，生成的程序放在build/debug中，与build/opt互不干扰。</p>
+<p>用<code>ldd</code>命令检查<code>libzsim.so</code>的动态链接库，没有出现未定义的符号，所有的依赖库都链接到了系统库中。</p>
+<pre><code class="language-plaintext">$ ldd -r build/opt/libzsim.so
+	linux-vdso.so.1 =&gt;  (0x00007fff53ffe000)
+	libconfig++.so.8 =&gt; /usr/lib/libconfig++.so.8 (0x00007f753e289000)
+	libboost_regex.so.1.46.1 =&gt; /usr/lib/libboost_regex.so.1.46.1 (0x00007f753df87000)
+	libelf.so.0 =&gt; /usr/lib/libelf.so.0 (0x00007f753dd6e000)
+	....
+	libhdf5.so.6 =&gt; /usr/lib/libhdf5.so.6 (0x00007f753d3c6000)
+	libhdf5_hl.so.6 =&gt; /usr/lib/libhdf5_hl.so.6 (0x00007f753d194000)
+	....
+</code></pre>
+<h2 id="运行模拟器">运行模拟器</h2>
+<h3 id="修改系统配置">修改系统配置</h3>
+<p>ZSim的README里有说明，要改几个内核参数。运行如下命令：</p>
+<pre><code class="language-bash">sudo sysctl -w kernel.shmmax=1073741824
+sudo sysctl -w kernel.yama.ptrace_scope=0
+</code></pre>
+<h3 id="运行zsim">运行ZSim</h3>
+<p>运行方法为<code>zsim &lt;config&gt;</code>。比如，运行axle自带的NVM配置文件：</p>
+<pre><code class="language-bash">./build/opt/zsim ./tests/AXLE-sandy-nvm.cfg
+</code></pre>
+<p>这个配置文件有两个负载，分别是<code>ls</code>和<code>cat</code>命令：</p>
+<pre><code class="language-json">// Populate process entries with scripts
+// Simple example with 2 processes given
+process0 = {
+    command = &quot;ls -alh --color tests/&quot;;
+};
+
+process1 = {
+    command = &quot;cat tests/simple.cfg&quot;;
+}
+</code></pre>
+<p>这里command的书写方式有点类似于shell命令。上面的command用的是相对路径，如果zsim换一个路径运行，就可能找不到相应的文件了。command支持环境变量，因此我是这样写的：</p>
+<pre><code class="language-json">process0 = {
+    command = &quot;ls -alh --color $ZSIMPATH/tests/&quot;;
+};
+</code></pre>
+<p>下图是部分输出结果。cat命令的输出太长，所以我就只截图了最后一部分，以及ls的完整输出。cat输出了simple.cfg文件内容，ls则列举了tests文件夹的所有内容。然后两个child done，模拟器退出。</p>
+<p><img src="zsim_axle_result.png" alt="zsim_axle_result"></p>
+<h3 id="统计输出">统计输出</h3>
+<p>模拟器运行结束后，在当前目录下会有一系列的统计数据。</p>
+<pre><code class="language-plaintext">$ ls
+heartbeat         out.cfg      zsim-ev.h5  zsim.log.0  zsim.out
+mem-0-nvmain.out  zsim-cmp.h5  zsim.h5     zsim.log.1
+</code></pre>
+<p>以zsim.out为例。在该文件里，有每个CPU核的统计信息，包括执行的周期数和指令数。此外，还有各级缓存的命中率、每个进程执行的指令数等，以及NVMain内存控制器的统计信息。</p>
+<pre><code class="language-plaintext">......
+sandy: # Core stats
+  sandy-0: # Core stats
+   cycles: 1492524 # Simulated unhalted cycles
+   cCycles: 1122301 # Cycles due to contention stalls
+   instrs: 212977 # Simulated instructions
+   uops: 227667 # Retired micro-ops
+   bbls: 46942 # Basic blocks
+
+......
+
+mem: # Memory controller stats
+  mem-0: # Memory controller stats
+   issued: 12804 # Issued requests
+   rd: 12804 # Read requests
+   wr: 0 # Write requests
+   PUTS: 0 # Clean Evictions (from lower level)
+   PUTX: 0 # Dirty Evictions (from lower level)
+......
+</code></pre>
+<p>至于其他文件，目前我知道的有：</p>
+<ol>
+<li>out.cfg是本次运行的ZSim的所有配置</li>
+<li>zsim.log是每个进程各自的输出日志</li>
+<li>mem-0-nvmain.out是NVMain的详细统计信息</li>
+<li>h5文件则是以二进制格式保存的统计数据，可用pandas等工具读取分析。</li>
+</ol>
+<h2 id="问题与思考">问题与思考</h2>
+<p>我在编译ZSim/NVMain中，碰到过不少问题，也了解过不少命令的含义，为的是想要搞清楚这个模拟器编译起来会这么复杂。在此予以记录，希望能解决一部分人的疑惑。</p>
+<h3 id="新版本zsim的一些特点">新版本ZSim的一些特点</h3>
+<p>axle-zsim-nvmain使用的不是最新版本的ZSim。最新版本的ZSim有一些不同的地方。目前我找到的有：</p>
+<ol>
+<li>没有boost库依赖。</li>
+<li>完美支持Pin 2.14</li>
+<li>NULL改成nullptr</li>
+<li>新增了几个文件（access_tracing、parse_vdso等），zsim.cpp/init.cpp/zsim.h等代码有大幅度改动。</li>
+</ol>
+<p>我不清楚NVMain还能否兼容最新的ZSim。因为<a href="https://github.com/SEAL-UCSB/NVmain">NVMain官方仓库</a>只给了一个axle-zsim-nvmain的链接，没有说清楚怎么给ZSim打补丁。</p>
+<h3 id="pintool对于系统和编译器版本的限制">PinTool对于系统和编译器版本的限制</h3>
+<p><a href="https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html">GCC官方文档：GXX ABI VERSION</a></p>
+<p><a href="https://gcc.gnu.org/projects/cxx-status.html#cxx11">GCC官方文档：C++11 Support in GCC</a></p>
+<p><a href="https://github.com/wangziqi2013/zsim-base/issues/4">What is the last known working environment for the zsim in this repository?</a></p>
+<p>PinTool不是一个完全开源的工具。它有很多已经编译好的文件。ZSim只能通过静态或动态链接的方式使用它们。这就要求你必须使用匹配的GCC版本，否则编译出来的符号表之类的就会不匹配，导致链接失败。</p>
+<p>在<code>pin_kit/source/include/pin/gen/cc_used_ia32_l.CVH</code>中有如下定义，说明Pin 2.13是用GCC 4.4编译的。</p>
+<pre><code class="language-c">#define CC_USED__ 4
+#define CC_USED_MINOR__ 4
+#define CC_USED_PATCHLEVEL__ 7
+#define CC_USED_ABI_VERSION 1002
+</code></pre>
+<p>在<code>pin_kit/source/include/pin/compiler_version_check2.H</code>里，<code>CC_USED_ABI_VERSION</code>必须GCC内置的<code>__GXX_ABI_VERSION</code>匹配，不匹配就不通过。</p>
+<pre><code class="language-c++">#elif CC_USED_ABI_VERSION == 1002
+
+#if CC_USED_ABI_VERSION != __GXX_ABI_VERSION
+#error This kit requires gcc 3.4 or later
+#endif
+
+#else
+</code></pre>
+<p>默认使用1002的ABI的只有GCC 3.4和GCC 4.x。</p>
+<p>GCC 3.4这个版本行不通，因为ZSim使用的标准是C++0x。所以我们至少要用GCC 4.6，这也是ZSim作者自己使用的版本。</p>
+<p>综上所述，由于我是Ubuntu用户，同时又不想自己指定ABI版本，我只能用<strong>Ubuntu 12.04</strong>（GCC 4.6）或者<strong>Ubuntu 14.04</strong>（GCC 4.8）了。</p>
+<p>Ubuntu 16使用的是GCC 5，所以不能直接使用。虽然可以手动安装GCC 4.8，但是系统里的各种第三方库可能还是用GCC 5编译的。这种情况下我没办法保证ZSim还能正常工作。</p>
+<h3 id="ptrace与argspush_backchild">ptrace与args.push_back(&ldquo;child&rdquo;)</h3>
+<p><a href="https://github.com/s5z/zsim#readme">ZSim README</a></p>
+<p><a href="https://github.com/s5z/zsim/issues/109#issuecomment-471288950">Pin 3.0 Compilation · Issue #109 · s5z/zsim</a></p>
+<p>ZSim是一个user level模拟器。它需要利用PinTool向负载进程里注入模拟器的代码，即使用<code>ptrace</code>。</p>
+<p>出于安全性，除非是root用户，否则Linux默认只允许父进程跟踪子进程。所以要用<code>sysctl</code>允许任意进程注入代码。这一点在ZSim的README里已经说明了。</p>
+<pre><code class="language-bash">sudo sysctl -w kernel.yama.ptrace_scope=0
+</code></pre>
+<p>不过，网上大多数博客使用的是另一种做法：用<code>-injection child</code>参数，让Pin将负载创建为子进程。这样确实可以运行模拟器，但是由于不是ZSim官方的做法，会导致ZSim的一些错误提示失效。有时候，我看到控制台里输出了一个“运行结束”：</p>
+<pre><code class="language-plaintext">[H] Child 4204 done
+</code></pre>
+<p>但我查看负载的运行结果，发现负载实际上运行错误了。</p>
+<p>换句话说，这种情况下ZSim不再是负载的父进程，所以无法直接获取到负载的退出状态。你应该通过负载的输出来判断它是否运行正常。</p>
+<h3 id="shmmax">shmmax</h3>
+<p>ZSim在负载进程中注入的数据位于共享内存空间中。这样ZSim在并发运行多个负载时，就不需要重复注入代码。</p>
+<p>Ubuntu 12.04默认的shmmax只有32MB。</p>
+<pre><code class="language-bash">$ cat /proc/sys/kernel/shmmax
+33554432
+</code></pre>
+<p>如果这个值小于ZSim配置文件里的<code>gmMBytes</code>，就会报下面的错误：</p>
+<pre><code class="language-plaintext">[H] Creating global segment, 1024 MBs
+gm_create failed shmget: Invalid argument
+</code></pre>
+<p><code>sysctl</code>可以扩大shmmax，单位是byte。我这里设置的是1GB。</p>
+<pre><code class="language-bash">sudo sysctl -w kernel.shmmax=1073741824
+</code></pre>
+<p>新版本的系统，比如Ubuntu 14，shmmax几乎无限制，那么就不需要自己调shmmax了。</p>
+
+        </div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">上一页</span>
+        <a href="/posts/mem_zsim_hscc/" class="block">ZSim/NVMain模拟器编译（HSCC/SHMA）</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+    </div>
+</div>
+
+        
+
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#环境">环境</a></li>
+    <li><a href="#编译模拟器">编译模拟器</a>
+      <ul>
+        <li><a href="#下载代码和依赖库">下载代码和依赖库</a></li>
+        <li><a href="#兼容pin-214">兼容Pin 2.14</a></li>
+        <li><a href="#编译代码">编译代码</a></li>
+      </ul>
+    </li>
+    <li><a href="#运行模拟器">运行模拟器</a>
+      <ul>
+        <li><a href="#修改系统配置">修改系统配置</a></li>
+        <li><a href="#运行zsim">运行ZSim</a></li>
+        <li><a href="#统计输出">统计输出</a></li>
+      </ul>
+    </li>
+    <li><a href="#问题与思考">问题与思考</a>
+      <ul>
+        <li><a href="#新版本zsim的一些特点">新版本ZSim的一些特点</a></li>
+        <li><a href="#pintool对于系统和编译器版本的限制">PinTool对于系统和编译器版本的限制</a></li>
+        <li><a href="#ptrace与argspush_backchild">ptrace与args.push_back(&ldquo;child&rdquo;)</a></li>
+        <li><a href="#shmmax">shmmax</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; Yaland Hong
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>
