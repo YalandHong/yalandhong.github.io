@@ -72,7 +72,7 @@
   "itemListElement": [{
       "@type": "ListItem",
       "position": 1 ,
-      "name":"Posts",
+      "name":"文章",
       "item":"/posts/"},{
       "@type": "ListItem",
       "position": 2 ,
@@ -93,7 +93,7 @@
     },
     "headline": "ZSim\/NVMain模拟器编译（HSCC\/SHMA） | YalandHong","datePublished": "2021-10-18T17:31:44+08:00",
     "dateModified": "2021-10-18T17:31:44+08:00",
-    "wordCount":  3294 ,
+    "wordCount":  3291 ,
     "publisher": {
         "@type": "Person",
         "name": "C. Wang",
@@ -240,7 +240,7 @@
         <div class="content">
             <p>我在网上找到的关于ZSim/NVMain混合内存模拟器的编译教程大致分为两大类。一种使用的是原版ZSim，称为<a href="https://github.com/AXLEproject/axle-zsim-nvmain">axle-zsim-nvmain</a>。另一种使用的是华中科技大学计算机学院在原版基础上扩展后的ZSim，称为<a href="https://github.com/CGCL-codes/HSCC">HSCC</a>或<a href="https://github.com/cyjseagull/SHMA">SHMA</a>。</p>
 <p>上面两者我都自己尝试过，也碰到过不少问题，做过一些探究，在此予以记录。对于我未能解决的问题，希望各位读者能够给出答案。</p>
-<p>本文编译的是扩展过的ZSim，即SHMA。关于axle-zsim-nvmain的编译过程详见我另一篇博客。两个仓库不完全相同，但很多内容是重复的，有些编译或运行错误也是一样的，我不多赘述。</p>
+<p><strong>本文编译的是扩展过的ZSim，即SHMA</strong>。关于axle-zsim-nvmain的编译过程详见我另一篇博客。两个仓库不完全相同，但很多内容是重复的，有些编译或运行错误也是一样的，我不多赘述。</p>
 <h2 id="环境">环境</h2>
 <p>操作系统：<strong>Ubuntu 14.04 amd64</strong>（VMWare）</p>
 <p>内核版本：4.4.0-142-generic</p>
@@ -295,17 +295,17 @@ export ZSIMPATH PINPATH NVMAINPATH BOOST CPLUS_INCLUDE_PATH
 <pre><code class="language-cpp">args.push_back(&quot;-ifeellucky&quot;);
 </code></pre>
 <p>因为Pin 2.13对Linux 4.x内核的支持性不好，不加这一行会报错：</p>
-<pre><code>E:4.4 is not a supported linux release
+<pre><code class="language-plaintext">E:4.4 is not a supported linux release
 </code></pre>
 </li>
 <li>
 <p>编译模拟器。在axle-zsim-nvmain目录下运行scons编译。<code>-j</code>参数可以指定多线程加速编译过程。编译完成后在<code>bin</code>文件夹下会生成<code>libzsim.so</code>和<code>zsim</code>两个文件。</p>
-<pre><code class="language-bash">scons
+<pre><code class="language-bash">scons -j2
 </code></pre>
 </li>
 <li>
 <p>用<code>ldd</code>命令检查生成的二进制文件，没有库缺失。</p>
-<pre><code>$ ldd -r bin/libzsim.so 
+<pre><code class="language-plaintext">$ ldd -r bin/libzsim.so 
         linux-vdso.so.1 =&gt;  (0x00007fff4a7f5000)
         libconfig++.so.9 =&gt; /usr/lib/x86_64-linux-gnu/libconfig++.so.9 (0x00007fc7961a2000)
         libglog.so.0 =&gt; /usr/lib/x86_64-linux-gnu/libglog.so.0 (0x00007fc795f6a000)
@@ -348,7 +348,7 @@ export ZSIMPATH PINPATH NVMAINPATH BOOST CPLUS_INCLUDE_PATH
 <p><a href="https://github.com/s5z/zsim/issues/174">undefined symbol: gzwrite · Issue #174 · s5z/zsim</a></p>
 <p>我之所以使用Ubuntu 14.04，是因为诸如boost这些依赖库都可以通过apt安装，没必要自己重新编译。</p>
 <p>我最开始是自己编译ZSim的各个依赖库的，比如boost等。但是最后出现了无法解决的问题。ZSim无法启动，总是提示undefined symbol错误，找不到gzopen/gzwrite等函数。</p>
-<pre><code>undefined symbol: gzwrite
+<pre><code class="language-plaintext">undefined symbol: gzwrite
 undefined symbol: gzopen
 </code></pre>
 <p>我怀疑是hdf5这个库的问题。<code>apt show libhdf5-dev</code>给出的依赖关系中有zlib1g-dev。但是我一开始没装zlib，也成功编译hdf5了。这就有问题了。即使我之后安装了zlib，还是报一样的错误。我用Ubuntu 14和Ubuntu 16都是这样。</p>
@@ -361,7 +361,7 @@ undefined symbol: gzopen
 <p><a href="https://stackoverflow.com/questions/11084123/cplus-include-path-doesnt-works">StackOverflow：CPLUS_INCLUDE_PATH doesn&rsquo;t works</a></p>
 <p><a href="https://gcc.gnu.org/onlinedocs/gcc/Environment-Variables.html">GCC Environment Variables</a></p>
 <p>我最开始直接用的axle-zsim-nvmain的配置，没有加<code>CPLUS_INCLUDE_PATH</code>这个环境变量，结果编译报错，提示有个头文件找不到：</p>
-<pre><code>In file included from build/opt/page-table/comm_page_table_op.h:7:0,
+<pre><code class="language-plaintext">In file included from build/opt/page-table/comm_page_table_op.h:7:0,
                  from build/opt/tlb/page_table_walker.h:16,
                  from build/opt/init.cpp:78:
 build/opt/tlb/common_func.h:5:34: fatal error: src/memory_hierarchy.h: No such file or directory
@@ -405,12 +405,12 @@ scons: building terminated because of errors.
 </table>
 <p>使用<code>env</code>命令查看所有环境变量，没有发现上面这几个变量，所以这些变量全部为空。一般系统默认也不会设置这些东西。也就是说，env.sh脚本里的那种用冒号拼接的写法，同时包含了两个路径：当前路径（也就是zsim-nvmain文件夹）和HDF5的路径。</p>
 <p>那么，在zsim-nvmain里当然可以找到<code>src</code>文件夹了。</p>
-<p>解决的方法有很多，只要让GCC能够找到指定的头文件即可。我上面选择了最省事的方法，直接添加一个头文件的搜索路径。<strong>但我不认为这是一种好的做法</strong>，原因在于NVMain文件夹里也有一个<code>src</code>。**随便乱包含头文件的路径的话，很容易导致重名的头文件发生冲突。而GCC对此是不会报错的，它只会使用它最先搜索到的那个文件。**观察ZSim其它文件，加了<code>src</code>前缀的include都是NVMain的头文件。</p>
+<p>解决的方法有很多，只要让GCC能够找到指定的头文件即可。我上面选择了最省事的方法，直接添加一个头文件的搜索路径。<strong>但我不认为这是一种好的做法</strong>，原因在于NVMain文件夹里也有一个<code>src</code>。<strong>随便乱包含头文件的路径的话，很容易导致重名的头文件发生冲突。而GCC对此是不会报错的，它只会使用它最先搜索到的那个文件</strong>。观察ZSim其它文件，加了<code>src</code>前缀的include都是NVMain的头文件。</p>
 <p><img src="tlb_src_position.png" alt="tlb_src_position"></p>
 <h3 id="echo错误">echo错误</h3>
 <p><strong>先说结论：<code>echo</code>是一把双刃剑。如果只是单纯输出字符串和变量，那么<code>echo</code>很方便。但凡是要输出更复杂的东西，比如反斜杠转义，建议用<code>printf</code>命令。因为不同版本的<code>echo</code>命令行为不同。</strong></p>
 <p>之前在编译HSCC的时候，出现过一个错误：</p>
-<pre><code>In file included from build/opt/zsim_harness.cpp:47:0:
+<pre><code class="language-plaintext">In file included from build/opt/zsim_harness.cpp:47:0:
 build/opt/version.h:1:4: error: stray ‘#’ in program
  -e #define ZSIM_BUILDDATE &quot;Sun Jan 10 15:23:15 CST 2021&quot;
     ^
