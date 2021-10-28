@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>数据重删 | YalandHong</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.3" />
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/github.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/json.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/plaintext.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"数据重删",
+      "item":"/posts/hpc_dedup/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/hpc_dedup/"
+    },
+    "headline": "数据重删 | YalandHong","datePublished": "2021-10-28T19:13:22+08:00",
+    "dateModified": "2021-10-28T19:13:22+08:00",
+    "wordCount":  2678 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "C. Wang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "Eureka is a elegant and powerful theme for Hugo."
+}
+</script><meta property="og:title" content="数据重删 | YalandHong" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/hpc_dedup/" />
+
+
+
+
+<meta property="og:description" content="" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="YalandHong" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-10-28T19:13:22&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2021-10-28T19:13:22&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">YalandHong</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">文章</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">数据重删</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-10-28</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>6分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <blockquote>
+<p>事先声明，我不是研究这个方向的，只是单纯对这一块的知识感兴趣。所以这只是一篇科普性的报告。当然，我会尽可能保证内容的准确性。如果有研究这个方向的大佬，欢迎批评指正！</p>
+</blockquote>
+<hr>
+<h2 id="概念">概念</h2>
+<p><a href="https://blog.51cto.com/u_13559412/2057144">浅谈存储重删压缩技术（一）【图文】_煮酒论IT_51CTO博客</a></p>
+<p>Data Deduplication：数据重删，顾名思义就是“将重复多余的数据删除”。</p>
+<p>以下简称dedup。</p>
+<h2 id="百度网盘">百度网盘</h2>
+<p>百度网盘有两个非常神奇的功能。</p>
+<p>一个叫极速秒传。GB级别的大文件，可能几秒钟后就显示“上传完毕”了。</p>
+<p><img src="rapid1.png" alt="rapid1"></p>
+<p>另一个叫违规文件检测。如果你上传了什么包含违法信息的文件，百度不会再允许用户下载这个文件，包括你自己。</p>
+<p><img src="censored.webp" alt="censored"></p>
+<p>这两个功能都使用了dedup技术。具体来说：</p>
+<ul>
+<li>当你在上传一个文件的时候，如果别人的百度网盘里有这个文件，就不用上传了，直接标记一下“你也有这个文件”就行了。</li>
+<li>类似地，这个之前已经所有被百度查封过的违规文件在百度上都有记录。如果你上传了这些违规文件中的某一个，那么百度就会立刻识别出来。</li>
+</ul>
+<p>所以，其实资本家很聪（e）明（xin）的。看上去百度云送了你2T的免费空间，可能真正存到它网盘里的就几KB。</p>
+<p>但从中我们可以看出，dedup有个明显的好处，那就是节（jing）省（hua）空（wang）间（luo）。</p>
+<p><img src="dedup_block.png" alt="dedup_block"></p>
+<p>在云存储领域，dedup往往能够带来巨大的空间节省，特别是当数据的重复度很高的时候。Windows/Linux中的文件系统链接（link）其实就是简单的dedup。</p>
+<p>只是这种形式的dedup是用户控制的，只能用在你保存别人分享的文件的时候。</p>
+<h2 id="重复文件识别">重复文件识别</h2>
+<p><a href="https://stackoverflow.com/questions/35954964/is-sha-512-collision-resistant">cryptography - is SHA-512 collision resistant? - Stack Overflow</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Birthday_problem#Probability_table">Birthday problem - Wikipedia</a></p>
+<h3 id="摘要">“摘要”</h3>
+<p>如果要人来识别重复文件，人会怎么做？最普通的办法是像Linux的<code>diff</code>命令一样，顺序比较。然而这种方法显然不能满足“秒传”的要求，搞不好要把整个文件都传到服务器去比较。</p>
+<pre><code class="language-bash">&quot;清&quot;华大学是全国最好的大学
+&quot;北&quot;京大学是全国最好的大学
+清华大学是&quot;北京&quot;最好的大学
+</code></pre>
+<p>要满足“秒传”的要求，显然只传一部分呢？那就只能挑选文件中的某些数据了。但是，怎么挑选呢？而且，并不是所有文件都是可读的文本。二进制文件怎么办？</p>
+<p>这时候一般人的知识就不够用了，需要科学家的智慧了。</p>
+<h3 id="计算指纹">计算指纹</h3>
+<p>对于一般的二进制文件，要计算出一个特殊的标识符，可以使用“指纹”技术。</p>
+<p>就像人的指纹一样，计算机也可以生成文件的“指纹”，把一个文件变成一串比较短的数字。这类特殊算法称为<strong>加密哈希函数（Cryptographic Hash Function）</strong>。常见的有MD5和SHA1，熟悉区块链的读者对此应该不陌生。如果你是Linux系统，可以在命令行里试一试：</p>
+<pre><code class="language-bash">$ sha1sum foo
+0c73382a147681d394bd55ca30a22192334bc161  foo
+
+$ md5sum foo
+0115ada7f10934a8163a7e2db641610f  foo
+</code></pre>
+<p>Windows也有类似的函数，我就不举例了。看上去就像随机生成的乱码一样，但这类函数有个神奇的性质：<strong>但凡输入的文件改变一点点，输出的指纹都会完全不同</strong>。这些函数的数学原理我不清楚，有兴趣的读者可以自行了解。</p>
+<p>如果指纹一样怎么办？当然现实换句话说，把一个大文件变小肯定会导致信息丢失，所以两个文件计算出来的指纹有可能是一样的。</p>
+<p><img src="sha1.png" alt="sha1"></p>
+<p>有个简单粗暴的方法，那就是多录一个指纹。你觉得单独用MD5不可靠，那就同时用MD5和SHA512，或者自己发明新的算法，把“指纹”的信息量拉大。</p>
+<h3 id="冲突的概率">冲突的概率</h3>
+<p>以指纹最长的SHA512为例。SHA512生成的指纹长度只有64B，但它的可靠性已经达到理论上$N(p\ge 10^{-9})=1.4×10^{77}$。即，如果全网用户每秒钟上传10亿个文件，理论上要经过$3\times 10^{69}$年，这些文件才会发生冲突，到那时候世界都毁灭了。</p>
+<p>所以，如网上所说，通常来说MD5或SHA1就足够了。有钻牛角尖的人可能会说，万一刚好就发生了小概率事件，用户丢文件了怎么办？那我估计，百度也不会承担责任，实在不行就给你一个单独的人工申诉通道。🤔</p>
+<h2 id="分析百度网盘的上传过程">分析百度网盘的上传过程</h2>
+<p><a href="https://www.zhihu.com/question/21275365/answer/647397762">百度云的「极速秒传」使用的是什么技术？ - stormfeng的回答 - 知乎</a></p>
+<p>根据知乎上的提示，我自己试了一下，使用Chrome开发者工具检查网页端的百度网盘上传时的HTTP请求。</p>
+<p>superfile这个链接是普通上传的链接。数据是一段一段上传的，间接解释了为什么百度云支持断点续传。在触发极速秒传的时候，确实是向rapidupload这个URL发送了一串数据。在服务器返回了一串信息后，网页上显示“秒传”。</p>
+<p><img src="rapid2.png" alt="rapid2"></p>
+<p>下面是测试过程中的一些现象和我自己的解释：</p>
+<ol>
+<li>
+<p>上传一个1GB的文件，大概在上传到25%的时候，才直接显示秒传。</p>
+<ul>
+<li>大文件计算指纹是比较耗时的，特别是用户硬盘速度很慢的时候。我自己电脑上，对于1G文件，在没有page cache的情况下计算MD5耗时近1分钟。因此上传和计算是同时进行的。</li>
+</ul>
+</li>
+<li>
+<p>还是这个1GB的文件，当上传速度很快的时候（15MB/s），没有秒传。可能是上传速度太快所以没有必要秒传，也可能是MD5计算速度跟不上。下面的结果倾向于后者：</p>
+<p><img src="chrome_throttle.png" alt="chrome_throttle"></p>
+<ul>
+<li>用Chrome开发者工具限制上传速度为100KB/s。但此时任务管理器显示，CPU占用率非常高。过了一分钟后，秒传。应该是程序把md5算完了。</li>
+<li>百度的md5计算速度非常慢，应该是JavaScript性能比C差的缘故。在考虑page cache的情况下，本地的<code>md5sum</code>只需2秒，百度的js要1分钟而且吃的CPU还多。因此，我推测百度网盘客户端会比网页端更快。</li>
+</ul>
+</li>
+<li>
+<p>content-md5字段和我本地MD5校验的结果不同。</p>
+<ul>
+<li>可能是百度云用了不同的算法。但是对于同一个文件，它的content-md5是一样的（这当然是废话）。</li>
+<li>目前我只知道它使用了某个版本的Spark MD5算法，因为有个叫<code>spark-md5.js</code>的文件。</li>
+</ul>
+</li>
+</ol>
+<h2 id="后记">后记</h2>
+<p><a href="https://www.youtube.com/watch?v=86x2UPqaV7U">NetApp Deduplication and Compression Tutorial - YouTube</a></p>
+<p><a href="https://www.youtube.com/watch?v=dlV2r7f966o">replication、duplication、dedup - YouTube</a></p>
+<p>dedup未必就是以文件为单位。一些云存储系统，比如坚果云，会以块为单位进行去重，实现增量同步。</p>
+<p><img src="delta_sync.png" alt="delta_sync"></p>
+<p>此外，并非所有领域都是在dedup。数据可靠性是需要冗余来保障的。通常这需要一个权衡。</p>
+<ul>
+<li>百度网盘上一个文件如果存在于几万个用户的网盘里的话，一般实际是不需要这么多副本的。</li>
+</ul>
+<p>最后，大多数网上的说法都是点到为止，介绍了一下MD5/SHA之类的哈希摘要算法就结束。至于这种系统实现中可能碰到的问题，并没有进行更深入的讨论。我认为可能的原因是，具体技术细节太复杂了很难说清，而且涉及到别人的商业机密。</p>
+<hr>
+<blockquote>
+<p>事后声明，百度和坚果云没有给我打钱。我以百度网盘为例子只是因为用户比较多，并不是在给百度做广告。我也不是存储领域的工程师，上面讨论的各种问题都是基于网上的信息以及我自己的思考。如有雷同，纯属巧合。</p>
+</blockquote>
+
+        </div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/x86_real_protected/" class="block">x86历史：实模式和保护模式</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#概念">概念</a></li>
+    <li><a href="#百度网盘">百度网盘</a></li>
+    <li><a href="#重复文件识别">重复文件识别</a>
+      <ul>
+        <li><a href="#摘要">“摘要”</a></li>
+        <li><a href="#计算指纹">计算指纹</a></li>
+        <li><a href="#冲突的概率">冲突的概率</a></li>
+      </ul>
+    </li>
+    <li><a href="#分析百度网盘的上传过程">分析百度网盘的上传过程</a></li>
+    <li><a href="#后记">后记</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; Yaland Hong
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>
