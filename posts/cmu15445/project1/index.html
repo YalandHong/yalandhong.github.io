@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>CMU15-445 2020Fall Project1 Buffer Pool Manager | YalandHong</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.3" />
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/github.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/json.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/plaintext.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"CMU15-445 2020Fall Project1 Buffer Pool Manager",
+      "item":"/posts/cmu15445/project1/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/cmu15445/project1/"
+    },
+    "headline": "CMU15-445 2020Fall Project1 Buffer Pool Manager | YalandHong","datePublished": "2022-04-06T16:54:23+08:00",
+    "dateModified": "2022-04-06T16:54:23+08:00",
+    "wordCount":  2103 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "C. Wang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "Eureka is a elegant and powerful theme for Hugo."
+}
+</script><meta property="og:title" content="CMU15-445 2020Fall Project1 Buffer Pool Manager | YalandHong" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/cmu15445/project1/" />
+
+
+
+
+<meta property="og:description" content="" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="YalandHong" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-04-06T16:54:23&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2022-04-06T16:54:23&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">YalandHong</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">文章</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">CMU15-445 2020Fall Project1 Buffer Pool Manager</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2022-04-06</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>5分钟阅读时长</span>
+    </div>
+    
+    
+
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p><a href="https://www.ravenxrz.ink/archives/8983c10b.html">CMU-15445-proj1(BufferPool) | Raven&rsquo;s Blog</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/382151977">CMU 15445 Project 1 Buffer Pool | 手摸手带你撸一个内存管理池 - 知乎</a></p>
+<p><a href="https://www.inlighting.org/archives/cmu-15-445-notes/">2021 CMU 15-445 实验笔记 | 沧海月明</a></p>
+<p>注意，20年的实验要求和19年不一样。19年的replacement策略是CLOCK，20年的是LRU。</p>
+<h2 id="coding">coding</h2>
+<p>Task 01的实验要求看得我一脸懵逼，我只能结合整个指导书和张老板的博客来看。</p>
+<p>指导书的顺序有问题。应该先介绍task 02的buffer pool manager，再介绍task 01的replacer，不然都搞不清楚replacer到底要干什么：</p>
+<ol>
+<li>victim()和pin()都把page frame从replacer中移除。有两个remove page的函数，但只有unpin一个归还的函数。不对应。</li>
+<li>哪些接口以及什么时候会改变LRU list？</li>
+<li>pin count不在replacer内部。</li>
+</ol>
+<p>replacer不是free list。所以page有三种状态：free位于free list，unpin位于replacer。其它的都是pin，既不在free list也不在replacer。所以最开始replacer是空的。</p>
+<p>replacer的pin/unpin接口写得不太好。应该用bool表示操作是否成功。</p>
+<p>注意在有些函数中要改变dirty flag。张老板的博客说要用<code>page-&gt;is_drity_ |= is_dirty</code>设置dirty flag。因为，如果第一次unpin是dirty，第二次unpin是clean，那么这个page还是dirty的。</p>
+<blockquote>
+<p>C/C++里没有<code>||=</code>运算符。</p>
+<p><a href="https://stackoverflow.com/questions/23107162/do-the-and-operators-for-bool-short-circuit">c++ - Do the &amp;= and |= operators for bool short-circuit? - Stack Overflow</a></p>
+<p><a href="https://stackoverflow.com/questions/2488406/why-doesnt-c-have-or-for-booleans">Why doesn&rsquo;t c++ have &amp;&amp;= or ||= for booleans? - Stack Overflow</a></p>
+</blockquote>
+<p>编译出错，<code>lru_replacer.h</code>依赖的<code>gmock.h</code>找不到。这是googletest的一部分，不知道为什么没有成功克隆到include里。最新2021年的bustub都不包含这个文件了。先把它删除。不然，不仅本地编译不过，提交上去也只有一句<code>The autograder failed to execute correctly</code>。</p>
+<blockquote>
+<p>clang-tidy在检测sample test的代码时报错。比如，<code>readability-function-cognitive-complexity</code>，大致意思是，函数太复杂了，内部可能嵌套了比较多的if、for等。</p>
+</blockquote>
+<p>buffer pool manager本地测试比较水，第二个SampleTest是第一个binary data test的阉割版，所以准确来说就只有一个测试点。</p>
+<p>关于并发，就目前的数据结构而言，replacer和buffer pool manager都没办法细化锁的粒度。</p>
+<h2 id="debug">debug</h2>
+<p>第一次提交上去，40分。</p>
+<ol>
+<li>LRU replacer只挂掉一个并发测试，因为我还没写。粗暴的lock之后可以过掉。</li>
+<li>buffer pool manager全挂了。回去看指导书才发现原来buffer pool manager是有本地测试点的，我没跑。本地运行一下，果然报一堆错误。</li>
+<li>test build依然会报很多关于gtest的错误，只不过不会影响其它的test case了。</li>
+</ol>
+<p>第二次提交，80分。</p>
+<ol>
+<li>buffer pool manager大部分测试点还是挂了。</li>
+<li>有些测试点是test failed，有些是Test Timed out。但代码里好像没有死循环的，所以有可能是crash了。</li>
+<li>并发没加，因为我还没写。</li>
+</ol>
+<p>第三次提交，加上了<code>lock_guard</code>之后直接150分，不仅过了concurrency test，所有的hardTest也全部通过了。有两个测试点挂了。</p>
+<pre><code>[ RUN      ] BufferPoolManagerTest.FetchPage
+/autograder/bustub/test/buffer/grading_buffer_pool_manager_test.cpp:281: Failure
+Expected: (nullptr) != (page), actual: (nullptr) vs NULL
+[  FAILED  ] BufferPoolManagerTest.FetchPage (0 ms)
+
+[ RUN      ] BufferPoolManagerTest.DeletePage
+/autograder/bustub/test/buffer/grading_buffer_pool_manager_test.cpp:387: Failure
+Expected: (nullptr) != (page), actual: (nullptr) vs NULL
+[  FAILED  ] BufferPoolManagerTest.DeletePage (0 ms)
+</code></pre>
+<p>找了半天也找不出错误来。索性放弃，看答案。按照张老板说的方法，我在代码内部定位test.cpp的文件，然后read/write把代码全部输出到stdout。这样就把它测试脚本的内容扒出来了。</p>
+<p>错误现象：newPage把buffer pool塞满，然后fetch这些page，但全部返回null。</p>
+<p>错误原因：fetchPage内部对empty的判定不对。只有当需要读取pool中没有的page时，才需要判断empty。</p>
+<p>这是个比较严重的错误。但却能够通过所有的hard test。说明，不要小看任何一个错误。而且这些test case也未必能够找到所有的错误，所以要参考知乎、博客上的坑点，对照一下有没有犯错。</p>
+<h2 id="一些细节">一些细节</h2>
+<p>有些细节，加或不加都可以AC，但并不代表不重要。</p>
+<p>知乎上有人说，new page之后要flush，避免出现new之后马上unpin(clean)。因为未flush的页面无法被fetch回来。不过，正常情况下的disk manager理应不允许这样的情况，分配一个page应该像分配一块内存一样。</p>
+<p>知乎上有人说，delete page时要调用一下pin，确保frame在加入free list的时候，从replacer中移除。不过，为什么即使一个page同时出现在free list和replacer中，还可以AC呢？因为目前的代码中，从free list取出一个page之后都会立刻pin，这就把它从replacer移除了。不过replacer中理应只包含victim page。</p>
+<p>DeletePage中，即使page table里没有page ID，也应该调用deallocate page。只是现在disk manager的DeallocatePage啥都不做，所以没法debug。</p>
+
+        </div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">下一页</span>
+        <a href="/posts/hpc_dedup/" class="block">数据重删</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">本页内容</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#coding">coding</a></li>
+    <li><a href="#debug">debug</a></li>
+    <li><a href="#一些细节">一些细节</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; Yaland Hong
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

@@ -8,7 +8,16 @@
     <language>zh</language>
     <copyright>&amp;copy; Yaland Hong
 </copyright>
-    <lastBuildDate>Thu, 28 Oct 2021 19:13:22 +0800</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 06 Apr 2022 16:54:23 +0800</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CMU15-445 2020Fall Project1 Buffer Pool Manager</title>
+      <link>/posts/cmu15445/project1/</link>
+      <pubDate>Wed, 06 Apr 2022 16:54:23 +0800</pubDate>
+      
+      <guid>/posts/cmu15445/project1/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>数据重删</title>
       <link>/posts/hpc_dedup/</link>
