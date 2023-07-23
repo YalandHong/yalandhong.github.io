@@ -1,0 +1,672 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yaland Hong">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="微软官方的VSCode C++插件是单线程模式，在扫描大型工程的时候速度特别慢。所以我一直用vscode-clangd插件。 但是clangd的最低要求是glibc 2.18。在一些比较老的系统上，比如CentOS 7，只有glibc 2.17。这会导致新版的clangd无法启动： 1.&#x2F;bin&#x2F;clangd: &#x2F;lib64&#x2F;libc.so.6: version &#96;GLIBC_2.18&amp;#x27;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS 7运行clangd 16">
+<meta property="og:url" content="https://yalandhong.github.io/2023/07/23/cpp/centos7_clangd/index.html">
+<meta property="og:site_name" content="Hong&#39;s Blog">
+<meta property="og:description" content="微软官方的VSCode C++插件是单线程模式，在扫描大型工程的时候速度特别慢。所以我一直用vscode-clangd插件。 但是clangd的最低要求是glibc 2.18。在一些比较老的系统上，比如CentOS 7，只有glibc 2.17。这会导致新版的clangd无法启动： 1.&#x2F;bin&#x2F;clangd: &#x2F;lib64&#x2F;libc.so.6: version &#96;GLIBC_2.18&amp;#x27;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yalandhong.github.io/2023/07/23/cpp/centos7_clangd/image-20230722114601766.png">
+<meta property="article:published_time" content="2023-07-23T05:30:18.000Z">
+<meta property="article:modified_time" content="2023-07-23T05:46:07.354Z">
+<meta property="article:author" content="Yaland Hong">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yalandhong.github.io/2023/07/23/cpp/centos7_clangd/image-20230722114601766.png">
+  
+  
+  
+  <title>CentOS 7运行clangd 16 - Hong&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"yalandhong.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":50,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Hong</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/dawn.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.4)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CentOS 7运行clangd 16"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-23 13:30" pubdate>
+          2023年7月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.8k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">CentOS 7运行clangd 16</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>微软官方的VSCode C++插件是单线程模式，在扫描大型工程的时候速度特别慢。所以我一直用vscode-clangd插件。</p>
+<p>但是clangd的最低要求是glibc 2.18。在一些比较老的系统上，比如CentOS 7，只有glibc 2.17。这会导致新版的clangd无法启动：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">./bin/clangd: /lib64/libc.so.6: version `GLIBC_2.18&#x27; not found (required by ./bin/clangd)<br></code></pre></td></tr></table></figure>
+
+<p>CentOS官方源里只有clangd 7，版本太老，无法运行vscode-clangd插件。</p>
+<p>我折腾了好几天，试着找到了一种相对简单的方法，足够让clangd和vscode-clangd插件跑起来，也不破坏系统glibc，也不编译LLVM或GCC。</p>
+<p>本文使用的系统是CentOS 7（VMWare Player 17），clangd版本为<a target="_blank" rel="noopener" href="https://github.com/clangd/clangd/releases/tag/16.0.2">16.0.2</a>。</p>
+<h2 id="原理解释"><a href="#原理解释" class="headerlink" title="原理解释"></a>原理解释</h2><blockquote>
+<p>对原理不感兴趣的可以直接跳过这部分。</p>
+</blockquote>
+<p>我在网上找到的方法大致分为三种：</p>
+<ol>
+<li>升级系统的glibc。这种方法比较危险，很容易导致系统无法启动。</li>
+<li>自己编译clangd。且不谈编译得到的clangd能否正确支持VSCode。这需要用cmake 3.x编译LLVM工具链。然而，CentOS 7只自带cmake 2.x。所以你首先要升级cmake等工具链。而且自己编译的clangd依然要依赖于glibc，本质上还是没解决问题。</li>
+<li>使用容器或虚拟机在CentOS 8里看代码。这样写代码和跑代码的环境不一致，也很不方便。</li>
+</ol>
+<p>根据<a target="_blank" rel="noopener" href="https://github.com/clangd/vscode-clangd/issues/16#issuecomment-624764721">官方的说法</a>，clangd不会引入对glibc 2.17的支持，所以<strong>如果想用官方提供的binary，glibc 2.18是绕不开的。</strong></p>
+<p>但clangd除了glibc 2.18，没有其它的运行库依赖。可以用<code>ldd</code>命令列出clangd需要的动态运行库。看上去列出了一大堆，其实都是glibc的库：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">[yaland@localhost clangd_16.0.2]$ ldd -r bin/clangd<br>bin/clangd: /lib64/libc.so.6: version `GLIBC_2.18&#x27; not found (required by bin/clangd)<br>	linux-vdso.so.1 =&gt;  (0x00007ffde5be4000)<br>	libpthread.so.0 =&gt; /lib64/libpthread.so.0 (0x00007f6cac8ab000)<br>	librt.so.1 =&gt; /lib64/librt.so.1 (0x00007f6cac6a3000)<br>	libdl.so.2 =&gt; /lib64/libdl.so.2 (0x00007f6cac49f000)<br>	libm.so.6 =&gt; /lib64/libm.so.6 (0x00007f6cac19d000)<br>	libc.so.6 =&gt; /lib64/libc.so.6 (0x00007f6cabdcf000)<br>	/lib64/ld-linux-x86-64.so.2 (0x00007f6cacac7000)<br>symbol __cxa_thread_atexit_impl, version GLIBC_2.18 not defined in file libc.so.6 with link time reference	(bin/clangd)<br></code></pre></td></tr></table></figure>
+
+<p>所以理论上，除了glibc 2.18，其它任何东西都不需要自己重新编译。</p>
+<p>单独替换<code>libc.so</code>的版本不行。我试过用<code>LD_LIBRARY_PATH</code>强制加载新版本的<code>libc.so</code>这一个文件，会报一些莫名其妙的错误。因为glibc里的各种库（包括加载程序使用的<code>ld.so</code>）是一个整体，不同版本的是不兼容的。</p>
+<p>此外，<code>ld.so</code>搜索glibc库文件的路径是写死在代码里的。所以你必须要指定一个目录，把glibc编译和安装进去，它才能正常使用。</p>
+<p>因此我的方法是：<strong>编译一个仅用于运行clangd的glibc 2.18，安装到自己的目录里，然后让clangd在运行时动态链接上去。</strong></p>
+<h2 id="执行过程"><a href="#执行过程" class="headerlink" title="执行过程"></a>执行过程</h2><p>需要安装GCC、GNU make等编译工具。一般这些都是系统自带的。如果没有的话也可以通过<code>yum</code>安装。</p>
+<p>CentOS 7自带GNU Make 3.82和GCC 4.8.5。</p>
+<h3 id="编译GLIBC-2-18"><a href="#编译GLIBC-2-18" class="headerlink" title="编译GLIBC 2.18"></a>编译GLIBC 2.18</h3><p>GNU官网下载glibc速度很慢。我这里用的是清华的镜像。</p>
+<p>注意：本过程<strong>不需要</strong>root权限。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 下载</span><br>wget https://mirrors.tuna.tsinghua.edu.cn/gnu/glibc/glibc-2.18.tar.gz<br><br><span class="hljs-comment"># 解压</span><br>tar -zxf  glibc-2.18.tar.gz<br><span class="hljs-built_in">cd</span> glibc-2.18<br><br><span class="hljs-comment"># 创建一个build目录方便编译</span><br><span class="hljs-built_in">mkdir</span> build<br><span class="hljs-built_in">cd</span> build<br><br><span class="hljs-comment"># prefix选择一个自己的目录</span><br><span class="hljs-comment"># glibc之后会被安装到这个目录</span><br>../configure --prefix=/home/yaland/mylibc<br><br><span class="hljs-comment"># 编译和安装</span><br>make -j4 &amp;&amp; make install<br></code></pre></td></tr></table></figure>
+
+<p>你可以验证一下你的glibc是否安装成功：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 跳转到你刚才选择的glibc 2.18安装目录</span><br><span class="hljs-built_in">cd</span> /home/yaland/mylibc/<br><br><span class="hljs-comment"># 检查glibc版本</span><br>./bin/ldd --version<br></code></pre></td></tr></table></figure>
+
+<p>它应该输出如下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">ldd (GNU libc) 2.18<br>Copyright (C) 2013 Free Software Foundation, Inc.<br>This is free software; see the source for copying conditions.  There is NO<br>warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br>Written by Roland McGrath and Ulrich Drepper.<br></code></pre></td></tr></table></figure>
+
+<h3 id="用自己的ld-so运行clangd"><a href="#用自己的ld-so运行clangd" class="headerlink" title="用自己的ld.so运行clangd"></a>用自己的ld.so运行clangd</h3><p>在编译好的glibc的<code>lib</code>目录下有个<code>ld-2.18.so</code>，用它运行clangd：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/home/yaland/mylibc/lib/ld-2.18.so  /path/to/clangd<br></code></pre></td></tr></table></figure>
+
+<p>clangd已经可以正常启动了：</p>
+<img src="/2023/07/23/cpp/centos7_clangd/image-20230722114601766.png" srcset="/img/loading.gif" lazyload class="" alt="image-20230722114601766">
+
+<p>你可以把这行命令写成可执行的shell脚本，就可以供VSCode插件使用。</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://github.com/clangd/vscode-clangd/issues/16">GLIBCs not found on host · Issue #16 · clangd&#x2F;vscode-clangd</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_14013325/4895865">安装clangd：‘GLIBC_2.18‘ not found解决 - 李响Superb的技术博客 - 51CTO博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/carlesloriente/ab3387e7d035ed400dc2816873e9089e">Compile and install GLIBC 2.18 in CentOS 7</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-254868.htm">关于不同版本 glibc 更换的一些问题-Pwn-看雪-安全社区|安全招聘|kanxue.com</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/55186770/can-ld-preload-be-used-to-load-different-versions-of-glibc">c - Can LD_PRELOAD be used to load different versions of glibc? - Stack Overflow</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/C-C/" class="category-chain-item">C/C++</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CentOS 7运行clangd 16</div>
+      <div>https://yalandhong.github.io/2023/07/23/cpp/centos7_clangd/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yaland Hong</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/29/cpp/pointer_and_array/" title="C/C++定义指针与数组时的优先级问题">
+                        <span class="hidden-mobile">C/C++定义指针与数组时的优先级问题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

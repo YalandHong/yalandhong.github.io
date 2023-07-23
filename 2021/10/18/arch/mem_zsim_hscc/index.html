@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yaland Hong">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="我在网上找到的关于ZSim&#x2F;NVMain混合内存模拟器的编译教程大致分为两大类。一种使用的是原版ZSim，称为axle-zsim-nvmain。另一种使用的是华中科技大学计算机学院在原版基础上扩展后的ZSim，称为HSCC或SHMA。 上面两者我都自己尝试过，也碰到过不少问题，做过一些探究，在此予以记录。对于我未能解决的问题，希望各位读者能够给出答案。 本文编译的是扩展过的ZSim，即S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZSim&#x2F;NVMain模拟器编译（HSCC&#x2F;SHMA）">
+<meta property="og:url" content="https://yalandhong.github.io/2021/10/18/arch/mem_zsim_hscc/index.html">
+<meta property="og:site_name" content="Hong&#39;s Blog">
+<meta property="og:description" content="我在网上找到的关于ZSim&#x2F;NVMain混合内存模拟器的编译教程大致分为两大类。一种使用的是原版ZSim，称为axle-zsim-nvmain。另一种使用的是华中科技大学计算机学院在原版基础上扩展后的ZSim，称为HSCC或SHMA。 上面两者我都自己尝试过，也碰到过不少问题，做过一些探究，在此予以记录。对于我未能解决的问题，希望各位读者能够给出答案。 本文编译的是扩展过的ZSim，即S">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yalandhong.github.io/2021/10/18/arch/mem_zsim_hscc/hscc_result.png">
+<meta property="og:image" content="https://yalandhong.github.io/2021/10/18/arch/mem_zsim_hscc/tlb_src_position.png">
+<meta property="article:published_time" content="2021-10-18T01:31:44.000Z">
+<meta property="article:modified_time" content="2022-09-03T01:24:53.000Z">
+<meta property="article:author" content="Yaland Hong">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yalandhong.github.io/2021/10/18/arch/mem_zsim_hscc/hscc_result.png">
+  
+  
+  
+  <title>ZSim/NVMain模拟器编译（HSCC/SHMA） - Hong&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"yalandhong.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":50,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Hong</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/dawn.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.4)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ZSim/NVMain模拟器编译（HSCC/SHMA）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-10-18 09:31" pubdate>
+          2021年10月18日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.3k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ZSim/NVMain模拟器编译（HSCC/SHMA）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>我在网上找到的关于ZSim&#x2F;NVMain混合内存模拟器的编译教程大致分为两大类。一种使用的是原版ZSim，称为<a target="_blank" rel="noopener" href="https://github.com/AXLEproject/axle-zsim-nvmain">axle-zsim-nvmain</a>。另一种使用的是华中科技大学计算机学院在原版基础上扩展后的ZSim，称为<a target="_blank" rel="noopener" href="https://github.com/CGCL-codes/HSCC">HSCC</a>或<a target="_blank" rel="noopener" href="https://github.com/cyjseagull/SHMA">SHMA</a>。</p>
+<p>上面两者我都自己尝试过，也碰到过不少问题，做过一些探究，在此予以记录。对于我未能解决的问题，希望各位读者能够给出答案。</p>
+<p><strong>本文编译的是扩展过的ZSim，即SHMA</strong>。关于axle-zsim-nvmain的编译过程详见我另一篇博客。两个仓库不完全相同，但很多内容是重复的，有些编译或运行错误也是一样的，我不多赘述。</p>
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>操作系统：<strong>Ubuntu 14.04 amd64</strong>（VMWare）</p>
+<p>内核版本：4.4.0-142-generic</p>
+<p>编译器版本：<strong>GCC 4.8.4</strong></p>
+<p>模拟器GitHub代码仓库：<a target="_blank" rel="noopener" href="https://github.com/CGCL-codes/HSCC">https://github.com/CGCL-codes/HSCC</a></p>
+<p>模拟器Gitee代码仓库：<a target="_blank" rel="noopener" href="https://gitee.com/NVM_Systems/HSCC">https://gitee.com/NVM_Systems/HSCC</a></p>
+<h2 id="编译过程"><a href="#编译过程" class="headerlink" title="编译过程"></a>编译过程</h2><p>相比于原版ZSim，HSCC自己简化了一些配置，但也制造了一些新的问题。下面是我自己的编译过程：</p>
+<ol>
+<li><p>下载代码仓库。HSCC把ZSim、NVMain和PinTool全部放到一起了，直接把整个仓库拉下来即可。然后进入<code>zsim-nvmain</code>文件夹。</p>
+</li>
+<li><p>安装各种依赖库。HSCC的依赖库相比axle-zsim-nvmain多了一个<code>glog</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 安装工具：scons gcc</span><br>sudo apt install scons g++<br><span class="hljs-comment"># 安装依赖库：hdf5 libconfig libelf</span><br>sudo apt install libhdf5-serial-dev libconfig++-dev libelfg0-dev<br><span class="hljs-comment"># 安装依赖库：glog  boost-regex(1.54)</span><br>sudo apt install libgoogle-glog-dev libboost-regex-dev<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>zsim-nvmain/env.sh</code>里设置环境变量。按照HSCC的README里的说明设置好。大部分和axle-zsim-nvmain一样，但有几点不同：</p>
+<ol>
+<li>HSCC自带Pin 2.13，所以不需要自己下载了，指向仓库里的位置即可</li>
+<li>我用的boost库是系统库，所以填一个不存在的位置即可</li>
+<li>设置<code>CPLUS_INCLUDE_PATH</code>变量为一个点，具体原因请看文章最后的问题与思考</li>
+<li>其它变量暂时用不到，删了</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">PINPATH=<span class="hljs-variable">$PWD</span>/pin_kit <span class="hljs-comment">#指向pin_kit路径</span><br>NVMAINPATH=<span class="hljs-variable">$PWD</span>/nvmain <span class="hljs-comment">#指向NVMain路径</span><br>ZSIMPATH=<span class="hljs-variable">$PWD</span> <span class="hljs-comment">#指向SConstruct所在路径</span><br><br>BOOST=fakepath<br><br>CPLUS_INCLUDE_PATH=.<br><br><span class="hljs-built_in">export</span> ZSIMPATH PINPATH NVMAINPATH BOOST CPLUS_INCLUDE_PATH<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>SConstruct</code>第28左右的位置，把<code>echo -e</code>中的<code>-e</code>去掉。具体原因请看后面的问题与思考。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">else</span>:<br>    env.Command(versionFile, allSrcs + [<span class="hljs-string">&quot;SConstruct&quot;</span>],<br>    <span class="hljs-comment"># 去掉这里的-e</span><br>    <span class="hljs-string">&#x27;echo -e &quot;#define ZSIM_BUILDDATE \\&quot;&quot;`date`\\&quot;&quot;\\\\n#define ZSIM_BUILDVERSION \\&quot;&quot;no git repo\\&quot;&quot;&quot; &gt;&gt;&#x27;</span> + versionFile)<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>src/pin_cmd.cpp</code>第53行左右的位置，在几个args pushback里添加一行代码。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">args.<span class="hljs-built_in">push_back</span>(<span class="hljs-string">&quot;-ifeellucky&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<p>因为Pin 2.13对Linux 4.x内核的支持性不好，不加这一行会报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">E:4.4 is not a supported linux release<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>编译模拟器。在axle-zsim-nvmain目录下运行scons编译。<code>-j</code>参数可以指定多线程加速编译过程。编译完成后在<code>bin</code>文件夹下会生成<code>libzsim.so</code>和<code>zsim</code>两个文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">scons -j2<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>用<code>ldd</code>命令检查生成的二进制文件，没有库缺失。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">$ ldd -r bin/libzsim.so <br>        linux-vdso.so.1 =&gt;  (0x00007fff4a7f5000)<br>        libconfig++.so.9 =&gt; /usr/lib/x86_64-linux-gnu/libconfig++.so.9 (0x00007fc7961a2000)<br>        libglog.so.0 =&gt; /usr/lib/x86_64-linux-gnu/libglog.so.0 (0x00007fc795f6a000)<br>        libboost_regex.so.1.54.0 =&gt; /usr/lib/x86_64-linux-gnu/libboost_regex.so.1.54.0 (0x00007fc795c63000)<br>        ....<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="运行模拟器"><a href="#运行模拟器" class="headerlink" title="运行模拟器"></a>运行模拟器</h2><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>这里我选择<code>config/dram.cfg</code>这个配置。这个配置不能直接拿来用，要做一些修改。</p>
+<p>首先是<code>gmMBytes</code>不能太大，至少你内存要能装得下。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs json">gmMBytes = <span class="hljs-number">8192</span>;    <span class="hljs-comment">// Simulator heap size in MB</span><br></code></pre></td></tr></table></figure>
+
+<p>然后是负载部分，把<code>process0</code>改成我们自己想要运行的程序。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs json">process0 = <span class="hljs-punctuation">&#123;</span><br>   command = <span class="hljs-string">&quot;ls -ahl&quot;</span>;<br><span class="hljs-punctuation">&#125;</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="系统设置"><a href="#系统设置" class="headerlink" title="系统设置"></a>系统设置</h3><p>给<code>pinbin</code>二进制文件增加执行权限。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">chmod</span> +x pin_kit/intel64/bin/pinbin<br></code></pre></td></tr></table></figure>
+
+<p>同axle-zsim-nvmain，让系统允许Pin向负载进程注入代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo sysctl -w kernel.yama.ptrace_scope=0<br></code></pre></td></tr></table></figure>
+
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p>在config文件夹中运行模拟器，配置文件为<code>dram.cfg</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> config<br>../bin/zsim dram.cfg<br></code></pre></td></tr></table></figure>
+
+<p>运行结果如下。模拟器输出了很多信息，包括DRAM、内存控制器、页表等各个模块的初始化参数。然后是ls命令的输出。由于终端打印出的内容很多，这里只截图输出的最后的一部分。</p>
+<img src="/2021/10/18/arch/mem_zsim_hscc/hscc_result.png" srcset="/img/loading.gif" lazyload class="" alt="hscc_result">
+
+<h2 id="问题与思考"><a href="#问题与思考" class="headerlink" title="问题与思考"></a>问题与思考</h2><p>我在编译HSCC中，碰到过不少问题，也了解过不少命令的含义，为的是想要搞清楚这些问题的来源。在此予以记录，希望能解决一部分人的疑惑。</p>
+<h3 id="确保换行符是LF"><a href="#确保换行符是LF" class="headerlink" title="确保换行符是LF"></a>确保换行符是LF</h3><p><a target="_blank" rel="noopener" href="https://github.com/SEAL-UCSB/NVmain/issues/5">An error happen when change a config file · Issue #5 · SEAL-UCSB&#x2F;NVmain</a></p>
+<p>NVMain在读取配置文件的时候无法正常处理CRLF换行符，会把<code>\r</code>也当成是配置的一部分，导致SIGSEGV等问题。</p>
+<h3 id="失败经历：编译依赖库"><a href="#失败经历：编译依赖库" class="headerlink" title="失败经历：编译依赖库"></a>失败经历：编译依赖库</h3><p><a target="_blank" rel="noopener" href="https://github.com/s5z/zsim/issues/174">undefined symbol: gzwrite · Issue #174 · s5z&#x2F;zsim</a></p>
+<p>我之所以使用Ubuntu 14.04，是因为诸如boost这些依赖库都可以通过apt安装，没必要自己重新编译。</p>
+<p>我最开始是自己编译ZSim的各个依赖库的，比如boost等。但是最后出现了无法解决的问题。ZSim无法启动，总是提示undefined symbol错误，找不到gzopen&#x2F;gzwrite等函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">undefined symbol: gzwrite<br>undefined symbol: gzopen<br></code></pre></td></tr></table></figure>
+
+<p>我怀疑是hdf5这个库的问题。<code>apt show libhdf5-dev</code>给出的依赖关系中有zlib1g-dev。但是我一开始没装zlib，也成功编译hdf5了。这就有问题了。即使我之后安装了zlib，还是报一样的错误。我用Ubuntu 14和Ubuntu 16都是这样。</p>
+<p>目前我还没有搞清楚为什么自己编译的libhdf5无法链接到系统的zlib。</p>
+<blockquote>
+<p>我猜HSCC是在Ubuntu 12编译的。如果换成Ubuntu 14，就会多出一些问题来。如果换成Ubuntu 16，又会有新的问题。</p>
+</blockquote>
+<h3 id="CPLUS-INCLUDE-PATH"><a href="#CPLUS-INCLUDE-PATH" class="headerlink" title="CPLUS_INCLUDE_PATH"></a>CPLUS_INCLUDE_PATH</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44327262/article/details/105860213">详解Linux下环境变量C_INCLUDE_PATH、CPLUS_INCLUDE_PATH、CPATH以及常见错误</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/11084123/cplus-include-path-doesnt-works">StackOverflow：CPLUS_INCLUDE_PATH doesn’t works</a></p>
+<p><a target="_blank" rel="noopener" href="https://gcc.gnu.org/onlinedocs/gcc/Environment-Variables.html">GCC Environment Variables</a></p>
+<p>我最开始直接用的axle-zsim-nvmain的配置，没有加<code>CPLUS_INCLUDE_PATH</code>这个环境变量，结果编译报错，提示有个头文件找不到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">In file included from build/opt/page-table/comm_page_table_op.h:7:0,<br>                 from build/opt/tlb/page_table_walker.h:16,<br>                 from build/opt/init.cpp:78:<br>build/opt/tlb/common_func.h:5:34: fatal error: src/memory_hierarchy.h: No such file or directory<br> #include &quot;src/memory_hierarchy.h&quot;<br>                                  ^<br>compilation terminated.<br>scons: *** [build/opt/init.os] Error 1<br>scons: building terminated because of errors.<br></code></pre></td></tr></table></figure>
+
+<p>问题出在HSCC的<code>tlb/common_func.h</code>这个文件。你会发现和ZSim其他文件相比，唯独这个文件的include加了一个<code>src/</code>。</p>
+<p>结论是，GCC先在当前目录（也就是TLB文件夹）里搜索头文件，找不到。然后就去ZSim代码的根目录（也就是zsim-nvmain&#x2F;src）下搜索，也找不到，于是报错。</p>
+<p>再回过头来看<code>CPLUS_INCLUDE_PATH</code>的作用。我删掉的是env.sh下面这一行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">CPLUS_INCLUDE_PATH=<span class="hljs-variable">$CPLUS_INCLUDE_PATH</span>:<span class="hljs-variable">$HDF5</span>/include<br></code></pre></td></tr></table></figure>
+
+<p>env脚本涉及到不少环境变量，<strong>这些变量必须要export才生效</strong></p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>C_INCLUDE_PATH</td>
+<td>等效于gcc的<code>-I</code>参数，添加头文件的包含路径</td>
+</tr>
+<tr>
+<td>CPLUS_INCLUDE_PATH</td>
+<td>等效于g++的<code>-I</code>参数，添加头文件的包含路径</td>
+</tr>
+<tr>
+<td>LD_LIBRARY_PATH</td>
+<td>增加动态链接库的路径</td>
+</tr>
+<tr>
+<td>LIBRARY_PATH</td>
+<td>增加静态链接库的路径</td>
+</tr>
+</tbody></table>
+<p>使用<code>env</code>命令查看所有环境变量，没有发现上面这几个变量，所以这些变量全部为空。一般系统默认也不会设置这些东西。也就是说，env.sh脚本里的那种用冒号拼接的写法，同时包含了两个路径：当前路径（也就是zsim-nvmain文件夹）和HDF5的路径。</p>
+<p>那么，在zsim-nvmain里当然可以找到<code>src</code>文件夹了。</p>
+<p>解决的方法有很多，只要让GCC能够找到指定的头文件即可。我上面选择了最省事的方法，直接添加一个头文件的搜索路径。<strong>但我不认为这是一种好的做法</strong>，原因在于NVMain文件夹里也有一个<code>src</code>。<strong>随便乱包含头文件的路径的话，很容易导致重名的头文件发生冲突。而GCC对此是不会报错的，它只会使用它最先搜索到的那个文件</strong>。观察ZSim其它文件，加了<code>src</code>前缀的include都是NVMain的头文件。</p>
+<img src="/2021/10/18/arch/mem_zsim_hscc/tlb_src_position.png" srcset="/img/loading.gif" lazyload class="" alt="tlb_src_position">
+
+<h3 id="echo错误"><a href="#echo错误" class="headerlink" title="echo错误"></a>echo错误</h3><p><strong>先说结论：<code>echo</code>是一把双刃剑。如果只是单纯输出字符串和变量，那么<code>echo</code>很方便。但凡是要输出更复杂的东西，比如反斜杠转义，建议用<code>printf</code>命令。因为不同版本的<code>echo</code>命令行为不同。</strong></p>
+<p>之前在编译HSCC的时候，出现过一个错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">In file included from build/opt/zsim_harness.cpp:47:0:<br>build/opt/version.h:1:4: error: stray ‘#’ in program<br> -e #define ZSIM_BUILDDATE &quot;Sun Jan 10 15:23:15 CST 2021&quot;<br>    ^<br>build/opt/version.h:1:1: error: expected unqualified-id before ‘-’ token<br> -e #define ZSIM_BUILDDATE &quot;Sun Jan 10 15:23:15 CST 2021&quot;<br> ^<br></code></pre></td></tr></table></figure>
+
+<p>我查看生成的<code>build/opt/version.h</code>，确实开头多了个<code>-e</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">-e <span class="hljs-meta">#<span class="hljs-keyword">define</span> ZSIM_BUILDDATE <span class="hljs-string">&quot;Sun Jan 10 15:23:15 CST 2021&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ZSIM_BUILDVERSION <span class="hljs-string">&quot;no git repo&quot;</span></span><br></code></pre></td></tr></table></figure>
+
+<p>我认为这是由于scons底层执行的是C语言的<code>system()</code>函数，而这个函数执行的是<code>dash</code>，而不是我们常用的<code>bash</code>。对于<code>echo -e hello</code>这个命令，到dash里执行就会有个<code>-e</code>，而bash则没有。</p>
+<blockquote>
+<p>axle-zsim-nvmain的echo是没有<code>-e</code>的，而最新的ZSim已经改用<code>printf</code>了。所以我也不知道HSCC为什么会有这个<code>-e</code>。</p>
+</blockquote>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="category-chain-item">体系结构</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ZSim/NVMain模拟器编译（HSCC/SHMA）</div>
+      <div>https://yalandhong.github.io/2021/10/18/arch/mem_zsim_hscc/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yaland Hong</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年10月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/26/arch/x86_real_protected/" title="x86历史：实模式和保护模式">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">x86历史：实模式和保护模式</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/15/arch/mem_zsim_axle/" title="ZSim/NVMain模拟器编译（AXLE-ZSIM-NVMAIN）">
+                        <span class="hidden-mobile">ZSim/NVMain模拟器编译（AXLE-ZSIM-NVMAIN）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

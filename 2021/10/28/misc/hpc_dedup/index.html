@@ -1,0 +1,720 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yaland Hong">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="事先声明，我不是研究这个方向的，只是单纯对这一块的知识感兴趣。所以这只是一篇科普性的报告。当然，我会尽可能保证内容的准确性。如果有研究这个方向的大佬，欢迎批评指正！   概念Data Deduplication：数据重删，顾名思义就是“将重复多余的数据删除”。 以下简称dedup。 百度网盘百度网盘有两个我曾经觉得非常神奇的功能。 一个叫极速秒传。GB级别的大文件，可能几秒钟后就显示“上传完毕”">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据重删">
+<meta property="og:url" content="https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/index.html">
+<meta property="og:site_name" content="Hong&#39;s Blog">
+<meta property="og:description" content="事先声明，我不是研究这个方向的，只是单纯对这一块的知识感兴趣。所以这只是一篇科普性的报告。当然，我会尽可能保证内容的准确性。如果有研究这个方向的大佬，欢迎批评指正！   概念Data Deduplication：数据重删，顾名思义就是“将重复多余的数据删除”。 以下简称dedup。 百度网盘百度网盘有两个我曾经觉得非常神奇的功能。 一个叫极速秒传。GB级别的大文件，可能几秒钟后就显示“上传完毕”">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/rapid1.png">
+<meta property="og:image" content="https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/censored.webp">
+<meta property="og:image" content="https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/dedup_block.png">
+<meta property="og:image" content="https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/sha1.png">
+<meta property="og:image" content="https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/rapid2.png">
+<meta property="og:image" content="https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/chrome_throttle.png">
+<meta property="og:image" content="https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/delta_sync.png">
+<meta property="article:published_time" content="2021-10-28T03:13:22.000Z">
+<meta property="article:modified_time" content="2023-02-27T12:53:19.000Z">
+<meta property="article:author" content="Yaland Hong">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/rapid1.png">
+  
+  
+  
+  <title>数据重删 - Hong&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"yalandhong.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":50,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Hong</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/dawn.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.4)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="数据重删"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-10-28 11:13" pubdate>
+          2021年10月28日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">数据重删</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>事先声明，我不是研究这个方向的，只是单纯对这一块的知识感兴趣。所以这只是一篇科普性的报告。当然，我会尽可能保证内容的准确性。如果有研究这个方向的大佬，欢迎批评指正！</p>
+</blockquote>
+<hr>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>Data Deduplication：数据重删，顾名思义就是“将重复多余的数据删除”。</p>
+<p>以下简称dedup。</p>
+<h2 id="百度网盘"><a href="#百度网盘" class="headerlink" title="百度网盘"></a>百度网盘</h2><p>百度网盘有两个我曾经觉得非常神奇的功能。</p>
+<p>一个叫极速秒传。GB级别的大文件，可能几秒钟后就显示“上传完毕”了。</p>
+<img src="/2021/10/28/misc/hpc_dedup/rapid1.png" srcset="/img/loading.gif" lazyload class="" alt="rapid1">
+
+<p>另一个叫违规文件检测。如果你上传了什么包含违法信息的文件，百度不会再允许用户下载这个文件，包括你自己。</p>
+<img src="/2021/10/28/misc/hpc_dedup/censored.webp" srcset="/img/loading.gif" lazyload class="" alt="censored">
+
+<p>这两个功能都使用了dedup技术。具体来说：</p>
+<ul>
+<li>当你在上传一个文件的时候，如果别人的百度网盘里有这个文件，就不用上传了，直接标记一下“你也有这个文件”就行了。</li>
+<li>类似地，所有被查封的违规文件在百度上都有记录。如果你上传了这些违规文件中的某一个，那么百度就会立刻识别出来。</li>
+</ul>
+<p>所以，其实资本家很聪（e）明（xin）的。看上去百度云送了你2T的免费空间，可能真正存到它网盘里的就几KB。</p>
+<p>但从中我们可以看出，dedup有个明显的好处，那就是节（jing）省（hua）空（wang）间（luo）。</p>
+<img src="/2021/10/28/misc/hpc_dedup/dedup_block.png" srcset="/img/loading.gif" lazyload class="" alt="dedup_block">
+
+<p>在云存储领域，dedup往往能够带来巨大的空间节省，特别是当数据的重复度很高的时候。Windows&#x2F;Linux中的文件系统链接（link）其实就是简单的dedup。</p>
+<p>只是这种形式的dedup是用户控制的，只能用在你保存别人分享的文件的时候。</p>
+<h2 id="重复文件识别"><a href="#重复文件识别" class="headerlink" title="重复文件识别"></a>重复文件识别</h2><h3 id="“摘要”"><a href="#“摘要”" class="headerlink" title="“摘要”"></a>“摘要”</h3><p>如果要人来识别重复文件，人会怎么做？最普通的办法是像Linux的<code>diff</code>命令一样，顺序比较。然而这种方法要把整个文件都传到服务器去比较，显然不能满足“秒传”的要求。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-string">&quot;清&quot;</span>华大学是全国最好的大学<br><span class="hljs-string">&quot;北&quot;</span>京大学是全国最好的大学<br>清华大学是<span class="hljs-string">&quot;北京&quot;</span>最好的大学<br></code></pre></td></tr></table></figure>
+
+<p>要满足“秒传”的要求，显然只能传一小部分。那就只能挑选文件中的某些数据了。但是，怎么挑选呢？而且，并不是所有文件都是可读的文本。二进制文件怎么办？</p>
+<p>这时候一般人的知识就不够用了，需要科学家的智慧了。</p>
+<h3 id="计算指纹"><a href="#计算指纹" class="headerlink" title="计算指纹"></a>计算指纹</h3><p>对于一般的二进制文件，要计算出一个特殊的标识符，可以使用“指纹”技术。</p>
+<p>就像人的指纹一样，计算机也可以生成文件的“指纹”，把一个文件变成一串比较短的数字。这类特殊算法称为<strong>加密哈希函数（Cryptographic Hash Function）</strong>。常见的有MD5和SHA1，熟悉区块链的读者对此应该不陌生。如果你是Linux系统，可以在命令行里试一试：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ <span class="hljs-built_in">sha1sum</span> foo<br>0c73382a147681d394bd55ca30a22192334bc161  foo<br><br>$ <span class="hljs-built_in">md5sum</span> foo<br>0115ada7f10934a8163a7e2db641610f  foo<br></code></pre></td></tr></table></figure>
+
+<p>Windows也有类似的函数，我就不举例了。看上去就像随机生成的乱码一样，但这类函数有个神奇的性质：<strong>但凡输入的文件改变一点点，输出的指纹都会完全不同</strong>。这些函数的数学原理我不清楚，有兴趣的读者可以自行了解。</p>
+<p>如果指纹一样怎么办？当然现实换句话说，把一个大文件变小肯定会导致信息丢失，所以两个文件计算出来的指纹有可能是一样的。</p>
+<img src="/2021/10/28/misc/hpc_dedup/sha1.png" srcset="/img/loading.gif" lazyload class="" alt="sha1">
+
+<p>有个简单粗暴的方法，那就是多录一个指纹。你觉得单独用MD5不可靠，那就同时用MD5和SHA512，或者自己发明新的算法，把“指纹”的信息量拉大。</p>
+<h3 id="冲突的概率"><a href="#冲突的概率" class="headerlink" title="冲突的概率"></a>冲突的概率</h3><p>以指纹最长的SHA512为例。SHA512生成的指纹长度只有64B，但它的可靠性已经达到理论上$N(p\ge 10^{-9})&#x3D;1.4×10^{77}$。即，如果全网用户每秒钟上传10亿个文件，理论上要经过$3\times 10^{69}$年，这些文件才会发生冲突，到那时候世界都毁灭了。</p>
+<p>所以，如网上所说，通常来说MD5或SHA1就足够了。有钻牛角尖的人可能会说，万一刚好就发生了小概率事件，用户丢文件了怎么办？那我估计，百度也不会承担责任，实在不行就给你一个单独的人工申诉通道。:thinking:</p>
+<h2 id="分析百度网盘的上传过程"><a href="#分析百度网盘的上传过程" class="headerlink" title="分析百度网盘的上传过程"></a>分析百度网盘的上传过程</h2><p>根据知乎上的提示，我自己试了一下，使用Chrome开发者工具检查网页端的百度网盘上传时的HTTP请求。</p>
+<p>superfile这个链接是普通上传的链接。数据是一段一段上传的，间接解释了为什么百度云支持断点续传。在触发极速秒传的时候，确实是向rapidupload这个URL发送了一串数据。在服务器返回了一串信息后，网页上显示“秒传”。</p>
+<img src="/2021/10/28/misc/hpc_dedup/rapid2.png" srcset="/img/loading.gif" lazyload class="" alt="rapid2">
+
+<p>下面是测试过程中的一些现象和我自己的解释：</p>
+<ol>
+<li><p>上传一个1GB的文件，大概在上传到25%的时候，才直接显示秒传。</p>
+<ul>
+<li>大文件计算指纹是比较耗时的，特别是用户硬盘速度很慢的时候。我自己电脑上，对于1G文件，在没有page cache的情况下计算MD5耗时近1分钟。因此上传和计算是同时进行的。</li>
+</ul>
+</li>
+<li><p>还是这个1GB的文件，当上传速度很快的时候（15MB&#x2F;s），没有秒传。可能是上传速度太快所以没有必要秒传，也可能是MD5计算速度跟不上。下面的结果倾向于后者：</p>
+ <img src="/2021/10/28/misc/hpc_dedup/chrome_throttle.png" srcset="/img/loading.gif" lazyload class="" alt="chrome_throttle">
+
+<ul>
+<li>用Chrome开发者工具限制上传速度为100KB&#x2F;s。但此时任务管理器显示，CPU占用率非常高。过了一分钟后，秒传。应该是程序把md5算完了。</li>
+<li>百度的md5计算速度非常慢，应该是JavaScript性能比C差的缘故。在考虑page cache的情况下，本地的<code>md5sum</code>只需2秒，百度的js要1分钟而且吃的CPU还多。因此，我推测百度网盘客户端会比网页端更快。</li>
+</ul>
+</li>
+<li><p>content-md5字段和我本地MD5校验的结果不同。</p>
+<ul>
+<li>可能是百度云用了不同的算法。但是对于同一个文件，它的content-md5是一样的（这当然是废话）。</li>
+<li>目前我只知道它使用了某个版本的Spark MD5算法，因为有个叫<code>spark-md5.js</code>的文件。</li>
+</ul>
+</li>
+</ol>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>dedup未必就是以文件为单位。一些云存储系统，比如坚果云，会以块为单位进行去重，实现增量同步。</p>
+<img src="/2021/10/28/misc/hpc_dedup/delta_sync.png" srcset="/img/loading.gif" lazyload class="" alt="delta_sync">
+
+<p>此外，并非所有领域都是在dedup。数据可靠性是需要冗余来保障的。通常这需要一个权衡。</p>
+<ul>
+<li>百度网盘上一个文件如果存在于几万个用户的网盘里的话，一般实际是不需要这么多副本的。</li>
+</ul>
+<p>最后，大多数网上的说法都是点到为止，介绍了一下MD5&#x2F;SHA之类的哈希摘要算法就结束。至于这种系统实现中可能碰到的问题，并没有进行更深入的讨论。我认为可能的原因是，具体技术细节太复杂了很难说清，而且涉及到别人的商业机密。</p>
+<hr>
+<blockquote>
+<p>事后声明，百度和坚果云没有给我打钱。我以百度网盘为例子只是因为用户比较多，并不是在给百度做广告。上面讨论的各种问题都是基于网上的信息以及我自己的思考。如有雷同，纯属巧合。</p>
+</blockquote>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_13559412/2057144">浅谈存储重删压缩技术（一）【图文】_煮酒论IT_51CTO博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/35954964/is-sha-512-collision-resistant">cryptography - is SHA-512 collision resistant? - Stack Overflow</a></p>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Birthday_problem#Probability_table">Birthday problem - Wikipedia</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/21275365/answer/647397762">百度云的「极速秒传」使用的是什么技术？ - stormfeng的回答 - 知乎</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=86x2UPqaV7U">NetApp Deduplication and Compression Tutorial - YouTube</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=dlV2r7f966o">replication、duplication、dedup - YouTube</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" class="category-chain-item">技术杂谈</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>数据重删</div>
+      <div>https://yalandhong.github.io/2021/10/28/misc/hpc_dedup/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yaland Hong</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年10月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/09/02/markdown/blog-building/" title="Hexo Fluid建站小记">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Hexo Fluid建站小记</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/26/arch/x86_real_protected/" title="x86历史：实模式和保护模式">
+                        <span class="hidden-mobile">x86历史：实模式和保护模式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
